@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>OffLine by JeaRRo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">OffLine</h1>
+      <h2 class="project-tagline">Installer un serveur d&#39;imagerie</h2>
+      <a href="https://github.com/JeaRRo/Web" class="btn">View on GitHub</a>
+      <a href="https://github.com/JeaRRo/Web/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/JeaRRo/Web/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="installation-dun-serveur-dimagerie" class="anchor" href="#installation-dun-serveur-dimagerie" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation d'un serveur d'imagerie</h1>
+
+<p>Un serveur web local avec une réplication des tuiles d'imagerie Bing pour la zone de travail semble suffisant pour les Mapathons Missing-Maps dans des locaux ayant un wifi à faible débit.</p>
+
+<p>Installation d'un serveur de test dans une machine virtuelle (Virtualbox sous Linux). La prochaine étape sera de porter cette installation sur un RaspBerry Pi.</p>
+
+<h2>
+<a id="installation-ubuntu-server-140405-lts" class="anchor" href="#installation-ubuntu-server-140405-lts" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation Ubuntu server 14.04.05 LTS</h2>
+
+<h3>
+<a id="caractéristiques-de-la-machine-" class="anchor" href="#caract%C3%A9ristiques-de-la-machine-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Caractéristiques de la machine :</h3>
+
+<ul>
+<li>Ubuntu 14.04.05 LTS 64 bits</li>
+<li>Mémoire vive 2048Mo</li>
+<li>DD 40Go</li>
+<li>Carte réseau par pont sur l'interface eth0 de l'hôte. Configuration Dhcp</li>
+</ul>
+
+<p>User : osm. Ajout accès ssh par clé. Configuration vim : colorscheme evening. </p>
+
+<h2>
+<a id="installation-paquets-de-base-nodejs-tessera-nginx" class="anchor" href="#installation-paquets-de-base-nodejs-tessera-nginx" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation paquets de base, NodeJS, Tessera, Nginx</h2>
+
+<h3>
+<a id="paquets-complémentaires-de-base" class="anchor" href="#paquets-compl%C3%A9mentaires-de-base" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Paquets complémentaires de base</h3>
+
+<pre><code> sudo aptitude install avahi-daemon avahi-autoipd ca-certificates curl moreutils virt-what default-jre-headless git
+ sudo curl -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -o /usr/local/bin/jq
+ sudo chmod +x /usr/local/bin/jq
+</code></pre>
+
+<h3>
+<a id="node_js" class="anchor" href="#node_js" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Node_Js</h3>
+
+<pre><code>sudo apt-get install --no-install-recommends -y 
+sudo npm install -g npm@3
+sudo npm install -g interp 
+</code></pre>
+
+<h3>
+<a id="tessera" class="anchor" href="#tessera" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tessera</h3>
+
+<pre><code>sudo  add-apt-repository -y ppa:ubuntu-toolchain-r/test
+sudo apt-get update
+sudo apt-get install -y libstdc++6
+sudo npm install -g mapnik mbtiles tilelive tilelive-mapnik tilelive-carto tilelive-tmstyle \
+       tilelive-tmsource tilelive-file tilelive-http tilelive-mapbox tilejson tilelive-vector \
+       tilelive-blend tessera tl 
+</code></pre>
+
+<p><em>Tous ces paquets ne sont sans doute pas nécessaires… il faudrait tester avec juste :</em></p>
+
+<pre><code>  sudo npm -g tl tilelive tilejson tilelive-http mbtiles tessera
+</code></pre>
+
+<h3>
+<a id="nginx" class="anchor" href="#nginx" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Nginx</h3>
+
+<p><code>sudo aptitude install nginx</code></p>
+
+<h2>
+<a id="configuration-tessera" class="anchor" href="#configuration-tessera" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configuration Tessera</h2>
+
+<h3>
+<a id="télécharger-une-bbox-sur-bing" class="anchor" href="#t%C3%A9l%C3%A9charger-une-bbox-sur-bing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Télécharger une bbox sur Bing</h3>
+
+<p>bbox = “minX minY maxX maxY”. On peut utiliser <a href="http://bboxfinder.com/">http://bboxfinder.com/</a> pour définir la bbox mais attention le résultat utilise des virgules en séparateur. ( A supprimer dans la requete ) Dessiner un rectangle sur la zone choisie, sélectionner EPSG 4326 - WGS84, et l'ordre Lng-Lat pour le format puis copier le résultat.</p>
+
+<pre><code>mkdir data
+cd data`
+tl copy -z 1 -Z 5 -b "-109.940186 38.406254 -107.561646 39.766325" "http://`ecn.t0.tiles.virtualearth.net/tiles/a{q}.jpeg?g=587&amp;mkt=en-us&amp;n=z" mbtiles://./bing.mbtiles
+</code></pre>
+
+<p>Un test sur une zone plus importante avec une plage de zoom plus grande : <strong>Attention 33Mo de tuiles</strong></p>
+
+<pre><code>tl copy -z 16 -Z 19 -b "5.340514 45.950135 5.360298 45.962129" "http://ecn.t0.tiles.virtualearth.net/tiles/a{q}.png?g=5388" mbtiles://./amberieu.mbtiles
+</code></pre>
+
+<h3>
+<a id="vérifier-le-téléchargement" class="anchor" href="#v%C3%A9rifier-le-t%C3%A9l%C3%A9chargement" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Vérifier le téléchargement</h3>
+
+<p><code>tessera mbtiles://./bing.mbtiles</code>
+Ctrl-C pour arreter</p>
+
+<p>Ouvrir un navigateur <strong>http://IP_server:8080/</strong> </p>
+
+<h3>
+<a id="configurer-le-serveur-tessera" class="anchor" href="#configurer-le-serveur-tessera" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configurer le serveur Tessera</h3>
+
+<p><code>sudo mkdir -p /etc/tessera.conf.d</code></p>
+
+<p>Creer le fichier /etc/tessera.conf.d/bing.json et reporter le nom du fichier que vous venez de télécharger.</p>
+
+<pre><code># tessera
+description     "Tessera Tile Server (Node.js)"
+
+start on (local-filesystems and net-device-up and runlevel [2345])
+stop on shutdown
+
+env PORT="8082"
+env TESSERA_OPTS="--config /etc/tessera.conf.d -C 100"
+
+respawn
+#respawn limit 5 60
+
+pre-start script
+    if [ -z "$TESSERA_OPTS" ]; then
+      exit 1
+    fi
+    echo "[`date '+%c'`] Starting: tessera" &gt;&gt; /var/log/tessera.log
+end script
+
+pre-stop script
+    echo "[`date '+%c'`] Stopping: tessera" &gt;&gt; /var/log/tessera.log
+end script
+
+exec start-stop-daemon \
+        --start \
+        --chdir /home/osm \
+        --chuid osm \
+        --make-pidfile \
+        --pidfile /var/run/tessera.pid \
+                --exec /usr/bin/tessera -- &gt;&gt; /var/log/tessera.log 2&gt;&amp;1
+
+</code></pre>
+
+<h3>
+<a id="relancer-tessera" class="anchor" href="#relancer-tessera" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Relancer Tessera</h3>
+
+<p><code>sudo service tessera restart</code></p>
+
+<h3>
+<a id="vérifications" class="anchor" href="#v%C3%A9rifications" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Vérifications</h3>
+
+<p>Normalement la commande <code>ps ax|grep tessera</code> devrait répondre quelque chose comme :</p>
+
+<p><code>17471 ?        Ssl    0:03 node /usr/bin/tessera</code></p>
+
+<p>et un <code>tail -f var/log/tessera</code> devrait lister les accès au tuiles quand vous accéder avec un navigateur à l'adresse  http://IP_serveur:8082/tiles/bing</p>
+
+<h2>
+<a id="configurer-nginx" class="anchor" href="#configurer-nginx" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configurer Nginx</h2>
+
+<p>Editer le fichier /etc/nginx/sites-available/default</p>
+
+<pre><code>server {
+    listen 80 default_server;
+
+    root /usr/share/nginx/html;
+        proxy_buffering off;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+
+    server_name localhost rebing rebing.io 172.16.0.33;
+
+    location / {
+        try_files $uri $uri/ =404;
+                index index.html;
+
+    }
+        location /tiles {
+        proxy_pass http://127.0.0.1:8082;
+        }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+</code></pre>
+
+<p>Sauvegarder et relancer le serveur Nginx</p>
+
+<p><code>sudo service nginx restart</code></p>
+
+<h3>
+<a id="vérifications-1" class="anchor" href="#v%C3%A9rifications-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Vérifications</h3>
+
+<p>Les tuiles devraient être visibles sur l'adresse http://IP_server/tiles/bing</p>
+
+<p>Sinon chercher des erreurs dans /var/log/nginx/error.log </p>
+
+<p>Pendant la navigation, on peut visualiser les accès avec un <code>tail -f /var/log/nginx/access.log</code></p>
+
+<h2>
+<a id="configurer-id-pour-afficher-les-tuiles" class="anchor" href="#configurer-id-pour-afficher-les-tuiles" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configurer ID pour afficher les tuiles</h2>
+
+<p>dans ID, il faut ajouter un fond personnalisé : http://IP_server/tiles/bing/{z}/{x}/{y}.png</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/JeaRRo/Web">OffLine</a> is maintained by <a href="https://github.com/JeaRRo">JeaRRo</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
