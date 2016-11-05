@@ -126,7 +126,12 @@ Ctrl-C pour arreter</p>
 <p><code>sudo mkdir -p /etc/tessera.conf.d</code></p>
 
 <p>Creer le fichier /etc/tessera.conf.d/bing.json et reporter le nom du fichier que vous venez de télécharger.</p>
-
+<pre><code>
+{
+"/tiles/bing": "mbtiles:///home/osm/data/amberieu.mbtiles"
+}
+</code></pre>
+Créer le fichier /etc/init/tessera.conf
 <pre><code># tessera
 description     "Tessera Tile Server (Node.js)"
 
