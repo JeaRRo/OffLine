@@ -34,6 +34,49 @@
 <a id="installation-dun-serveur-dimagerie-sur-Rpi" class="anchor" href="#installation-dun-serveur-dimagerie-sur-Rpi" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation d'un serveur d'imagerie sur Rpi</h1>
 
 <p>Installer le serveur d'imagerie sur un Raspberry.pi </p>
+<h2>
+<a id="installation-Rpi" class="anchor" href="#installation-Rpi" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation Raspberry Pi </h2>
+
+<h3>
+<a id="caractéristiques-de-la-machine-" class="anchor" href="#caract%C3%A9ristiques-de-la-machine-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Caractéristiques </h3>
+
+<ul>
+<li>Raspeberry pi 2</li>
+<li>Mémoire vive 500Mo</li>
+<li>carte SD 16Go</li>
+<li>Carte réseau eth0. Configuration Dhcp</li>
+</ul>
+<h3>
+<a id="Raspbian" class="anchor" href="#Raspbian" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Intallation raspbian </h3>
+
+<p>Je dispose d'une Raspbian déjà installée... mais on peut aussi démarrer avec <a href="https://github.com/debian-pi/raspbian-ua-netinst">une installation minimale.</a> </p>
+<p>Pour trouver l'adresse Ip du Rpi avec démarrage, la commande <code> sudo nmap -sP {Ip_reseau}/24 </code> peut aider. <p>
+<p>User : pi. Ajout accès ssh par clé. Configuration vim : colorscheme evening. </p>
+<h2>
+<a id="installation-paquets-de-base-nodejs-tessera-nginx" class="anchor" href="#installation-paquets-de-base-nodejs-tessera-nginx" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation paquets de base, NodeJS, Tessera, Nginx</h2>
+
+<h3>
+<a id="paquets-complémentaires-de-base" class="anchor" href="#paquets-compl%C3%A9mentaires-de-base" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Paquets complémentaires de base</h3>
+
+<pre><code> sudo aptitude install avahi-daemon avahi-autoipd apt-transport-https ca-certificates curl moreutils virt-what default-jre-headless git
+</code></pre>
+
+<h3>
+<a id="node_js" class="anchor" href="#node_js" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Node_Js</h3>
+
+<pre><code>sudo apt-get install --no-install-recommends -y nodejs nodejs-legacy npm
+sudo npm install -g npm@3
+sudo npm install -g interp
+</code></pre>
+
+<h3>
+<a id="tessera" class="anchor" href="#tessera" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tessera</h3>
+<pre><code>  sudo npm install -g tl tilelive tilejson tilelive-http mbtiles tessera
+</code></pre>
+
+<b>Plantage  </b> Tessera à une dépendance vers mapnik3.5.14 et celui ci refuse de s'installer... :((
+
+Fin de l'installation.
 
           <footer class="site-footer">
             <span class="site-footer-owner"><a href="https://github.com/JeaRRo/Web">OffLine</a> is maintained by <a href="https://github.com/JeaRRo">JeaRRo</a>.</span>
