@@ -18,7 +18,7 @@
   ga('create', 'UA-86904547-1', 'auto');
   ga('send', 'pageview');
 
-</script>   
+</script>
   </head>
   <body>
     <section class="page-header">
@@ -36,6 +36,8 @@
 <p>Un serveur web local avec une réplication des tuiles d'imagerie Bing pour la zone de travail semble suffisant pour les Mapathons Missing-Maps dans des locaux ayant un wifi à faible débit.</p>
 
 <p>Installation d'un serveur de test dans une machine virtuelle (Virtualbox sous Linux). La prochaine étape sera de porter cette installation sur un RaspBerry Pi.</p>
+
+<p>Cette page est construite à partir d'informations trouvées sur <a href="https://github.com/AmericanRedCross/posm">POSM</a> et <a href="https://github.com/AmericanRedCross/posm/wiki/Custom-MBTiles">Custom tiles</a></p>
 
 <h2>
 <a id="installation-ubuntu-server-140405-lts" class="anchor" href="#installation-ubuntu-server-140405-lts" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation Ubuntu server 14.04.05 LTS</h2>
@@ -66,9 +68,9 @@
 <h3>
 <a id="node_js" class="anchor" href="#node_js" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Node_Js</h3>
 
-<pre><code>sudo apt-get install --no-install-recommends -y 
+<pre><code>sudo apt-get install --no-install-recommends -y
 sudo npm install -g npm@3
-sudo npm install -g interp 
+sudo npm install -g interp
 </code></pre>
 
 <h3>
@@ -79,7 +81,7 @@ sudo apt-get update
 sudo apt-get install -y libstdc++6
 sudo npm install -g mapnik mbtiles tilelive tilelive-mapnik tilelive-carto tilelive-tmstyle \
        tilelive-tmsource tilelive-file tilelive-http tilelive-mapbox tilejson tilelive-vector \
-       tilelive-blend tessera tl 
+       tilelive-blend tessera tl
 </code></pre>
 
 <p><em>Tous ces paquets ne sont sans doute pas nécessaires… il faudrait tester avec juste :</em></p>
@@ -232,6 +234,6 @@ exec start-stop-daemon \
 
     </section>
 
-  
+
   </body>
 </html>
